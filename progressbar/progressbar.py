@@ -221,21 +221,20 @@ class ProgressBar(object):
 
     def _format_line(self):
         """Joins the widgets and justifies the line."""
-
         widgets = ''.join(self._format_widgets())
-
-        if self.left_justify: return widgets.ljust(self.term_width)
-        else: return widgets.rjust(self.term_width)
+        if self.left_justify:
+            return widgets.ljust(self.term_width)
+        else:
+            return widgets.rjust(self.term_width)
 
 
     def _need_update(self):
         """Returns whether the ProgressBar should redraw the line."""
+        delta = time.time() - self.last_update_time
         if self.min_update_time and delta < self.min_update_time:
             return False
         if self.currval >= self.next_update or self.finished:
             return True
-
-        delta = time.time() - self.last_update_time
         return self._time_sensitive and delta > self.poll
 
 
