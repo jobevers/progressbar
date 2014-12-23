@@ -89,7 +89,7 @@ class ProgressBar(object):
                  'left_justify', 'maxval', 'next_update', 'num_intervals',
                  'poll', 'seconds_elapsed', 'signal_set', 'start_time',
                  'term_width', 'update_interval', 'widgets', '_time_sensitive',
-                 '__iterable')
+                 '__iterable', 'min_update_time')
 
     _DEFAULT_MAXVAL = 100
     _DEFAULT_TERMSIZE = 80
@@ -129,6 +129,7 @@ class ProgressBar(object):
         self.seconds_elapsed = 0
         self.start_time = None
         self.update_interval = 1
+        self.min_update_time = 1
         self.next_update = 0
 
 
@@ -229,7 +230,10 @@ class ProgressBar(object):
 
     def _need_update(self):
         """Returns whether the ProgressBar should redraw the line."""
-        if self.currval >= self.next_update or self.finished: return True
+        if self.min_update_time and delta < self.min_update_time:
+            return False
+        if self.currval >= self.next_update or self.finished:
+            return True
 
         delta = time.time() - self.last_update_time
         return self._time_sensitive and delta > self.poll
